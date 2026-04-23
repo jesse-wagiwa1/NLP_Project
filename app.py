@@ -3,6 +3,7 @@ import pickle
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Load model
 with open("model.pkl", "rb") as f:
@@ -63,3 +64,26 @@ ax2.set_xlabel("Language")
 ax2.set_ylabel("Count")
 
 st.pyplot(fig2)
+
+# -----------------------------
+# 🔍 CONFUSION MATRIX
+# -----------------------------
+st.subheader("Confusion Matrix")
+
+# Prepare data
+X = df['text']  # ⚠️ change if your column name is different
+y_true = df['language']
+
+# Transform and predict
+X_vec = vectorizer.transform(X)
+y_pred = model.predict(X_vec)
+
+# Compute confusion matrix
+cm = confusion_matrix(y_true, y_pred, labels=model.classes_, normalize='true')
+
+# Plot
+fig3, ax3 = plt.subplots()
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+disp.plot(ax=ax3, xticks_rotation=45)
+
+st.pyplot(fig3)
